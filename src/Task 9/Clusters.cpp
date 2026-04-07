@@ -1,27 +1,37 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-struct Point
+class Point
 {
+private:
     double x, y;
+
+public:
+    Point(int x, int y){
+        this->x = x;
+        this->y = y;
+    }
+
+    double getX(){
+        return x;
+    }
+    double getY(){
+        return y;
+    }
+
 };
 
 double distance(Point *a, Point *b)
-{
-    // root( (x1-x2)^2 - (y1-y2)^2 )
-
-    double differenceX = a->x - b->x;
-    double differenceY = a->y - b->y;
+{ // root( (x1-x2)^2 - (y1-y2)^2 )
+    double differenceX = a->getX() - b->getX();
+    double differenceY = a->getY() - b->getY();
     return sqrt(pow(differenceX,2)+  pow(differenceY,2));
 }
 int main()
 {
-    auto a = new Point();
-    auto b = new Point();
-    a->x = 3;
-    a->y = 5;
-    b->x = 4;
-    b->y = 7;
+      // Assume points are given in an array
+    vector<Point> myVector = {Point(3,4), Point(5,6)};
 
-    cout << "Distance = " << distance(a, b);
+
+
 }
