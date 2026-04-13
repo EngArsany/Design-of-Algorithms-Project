@@ -31,23 +31,27 @@ public:
     }
 };
 
-double distance(Point *a, Point *b)
+double pointDistance(Point *a, Point *b)
 { // root( (x1-x2)^2 - (y1-y2)^2 )
     double differenceX = a->getX() - b->getX();
     double differenceY = a->getY() - b->getY();
     return sqrt(pow(differenceX, 2) + pow(differenceY, 2));
 }
-int calculateMaxDistance(const vector<Point> &points)
+static int calculateMaxDistance(vector<Point> &points)
 {
     double maxDistance = -1;
     for (int i = 0; i < points.size(); i++)
     {
         for (int j = i; j < points.size(); j++)
         {
-            double currentDistance = distance(&points[i], &points[j]);
+            Point *point_1 = &points[i];
+            Point *point_2 = &points[j];
+
+            double currentDistance = pointDistance(point_1, point_2);
             maxDistance = max(maxDistance, currentDistance);
         }
     }
+    return maxDistance;
 }
 
 bool isExist(const vector<Point> &points, Point a)
