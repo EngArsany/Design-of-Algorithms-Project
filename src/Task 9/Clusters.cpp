@@ -7,7 +7,7 @@ vector<vector<Point>> bruteForceClusters(vector<Point> &points, int clusters)
     if (clusters == points.size() || clusters == 1) // Edge Cases
         return {points};
 
-    double maxDistance = 33;
+    double maxDistance = calculateMaxDistance(points);
     maxDistance = maxDistance / clusters;
     vector<bool> pointTaken(points.size());
 
