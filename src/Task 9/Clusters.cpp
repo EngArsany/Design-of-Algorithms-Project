@@ -1,5 +1,4 @@
 #include "ClustersHelper.hpp"
-// #include <bits/stdc++.h>
 using namespace std;
 
 vector<vector<Point>> bruteForceClusters(vector<Point> &points, int clusters)
@@ -7,10 +6,8 @@ vector<vector<Point>> bruteForceClusters(vector<Point> &points, int clusters)
     if (clusters == points.size() || clusters == 1) // Edge Cases
         return {points};
 
-    double maxDistance = calculateMaxDistance(points);
-    maxDistance = maxDistance / clusters;
+    double maxDistance = calculateMaxDistance(points) / clusters;
     vector<bool> pointTaken(points.size());
-
     vector<vector<Point>> clusteredPoints(clusters);
 
     for (int i = 0; i < points.size(); i++)
@@ -20,9 +17,10 @@ vector<vector<Point>> bruteForceClusters(vector<Point> &points, int clusters)
         if (pointTaken[i])
             continue;
 
-        clusteredPoints[--clusters].push_back({points[i]}); // add point to a cluster
-
         Point startPoint = points[i];
+        clusteredPoints[--clusters].push_back({startPoint}); // add point to a cluster
+        bool isLastCluster = (clusters == 0);
+        
         for (int j = i + 1; j < points.size(); j++)
         {
             if (pointTaken[i] || pointTaken[j])
@@ -31,7 +29,7 @@ vector<vector<Point>> bruteForceClusters(vector<Point> &points, int clusters)
             Point endPoint = points[j];
             double currentDistance = pointDistance(&startPoint, &endPoint);
 
-            if (currentDistance < maxDistance || clusters == 0)
+            if (currentDistance < maxDistance || isLastCluster)
             {
                 clusteredPoints[clusters].push_back({endPoint});
                 pointTaken[j] = true;
