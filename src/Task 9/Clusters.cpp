@@ -1,4 +1,5 @@
 #include "ClustersHelper.hpp"
+// #include <bits/stdc++.h>
 using namespace std;
 
 vector<vector<Point>> bruteForceClusters(vector<Point> &points, int clusters)
@@ -6,32 +7,34 @@ vector<vector<Point>> bruteForceClusters(vector<Point> &points, int clusters)
     if (clusters == points.size() || clusters == 1) // Edge Cases
         return {points};
 
-    double maxDistance = calculateMaxDistance(points);
-    maxDistance /= clusters;
-    vector<bool> pointTaken;
+    double maxDistance = 33;
+    maxDistance = maxDistance / clusters;
+    vector<bool> pointTaken(points.size());
 
-    vector<vector<Point>> clusteredPoints;
-    clusteredPoints[0].push_back(points[0]); // add first point to a cluster
+    vector<vector<Point>> clusteredPoints(clusters);
 
-    while (clusters--)
+    for (int i = 0; i < points.size(); i++)
     {
-        for (int i = 0; i < points.size(); i++)
+        if (clusters <= 0)
+            break;
+        if (pointTaken[i])
+            continue;
+
+        clusteredPoints[--clusters].push_back({points[i]}); // add point to a cluster
+
+        Point startPoint = points[i];
+        for (int j = i + 1; j < points.size(); j++)
         {
-            for (int j = i + 1; j < points.size(); j++)
+            if (pointTaken[i] || pointTaken[j])
+                continue;
+
+            Point endPoint = points[j];
+            double currentDistance = pointDistance(&startPoint, &endPoint);
+
+            if (currentDistance < maxDistance || clusters == 0)
             {
-                Point startPoint = points[i];
-                Point endPoint = points[j];
-
-                if (pointTaken[i])
-                    continue;
-
-                double currentDistance = distance(&startPoint, &endPoint);
-
-                if (currentDistance <= maxDistance)
-                {
-                    clusteredPoints[clusters].push_back(endPoint);
-                    pointTaken[j] = true;
-                }
+                clusteredPoints[clusters].push_back({endPoint});
+                pointTaken[j] = true;
             }
         }
     }
@@ -70,5 +73,6 @@ int main()
         cout << "Cluster number " << i + 1 << ":\n";
         for (auto point : clusteredPoints[i])
             point.print();
+        cout << "\n";
     }
 }
