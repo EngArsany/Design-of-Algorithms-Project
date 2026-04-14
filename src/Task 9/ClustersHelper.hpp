@@ -5,7 +5,7 @@ class Point
 {
 private:
     double x, y;
-    const double EPSILON = 0.1;
+    double EPSILON = 1;
 
 public:
     Point(double x, double y)
