@@ -90,3 +90,24 @@ Point findMeanPoint(vector<Point> &points)
     double meanY = totalY / points.size();
     return Point(meanX, meanY);
 }
+vector<vector<Point>> addPointsToNearestCluster(vector<Point> &points, vector<Point> clusterCenters)
+{
+    vector<vector<Point>> clusteredPoints;
+    for (Point point : points)
+    {
+        int nearestCluster;
+        double minDistance = INT_MAX;
+        for (int i = 0; i < clusterCenters.size(); i++)
+        {
+            double currentDistance = pointDistance(&point, &clusterCenters[i]);
+
+            if (currentDistance >= minDistance)
+                continue;
+
+            minDistance = currentDistance;
+            nearestCluster = i;
+        }
+        clusteredPoints[nearestCluster].push_back({point});
+    }
+    return clusteredPoints;
+}
