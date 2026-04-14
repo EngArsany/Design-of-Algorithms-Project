@@ -125,15 +125,14 @@ double clusterDistance(Cluster &a, Cluster &b)
 }
 vector<Cluster> mergeClusters(vector<Cluster> combinedClusters, int k)
 {
-    int numOfClusters = combinedClusters.size();
-    while (numOfClusters > k)
+    while (combinedClusters.size() > k)
     {
         int firstCluster = 0, secondCluster = 1;
         double minDistance = clusterDistance(combinedClusters[firstCluster], combinedClusters[secondCluster]);
 
-        for (int i = 0; i < numOfClusters; i++)
+        for (int i = 0; i < combinedClusters.size(); i++)
         {
-            for (int j = i + 1; j < numOfClusters; j++)
+            for (int j = i + 1; j < combinedClusters.size(); j++)
             {
                 double distance = clusterDistance(combinedClusters[i], combinedClusters[j]);
                 if (distance >= minDistance)
