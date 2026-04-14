@@ -80,30 +80,28 @@ vector<vector<Point>> iterativeImprovementClusters(vector<Point> &points, int cl
     return {{}};
 }
 
-void divideAndConquerClusters(vector<Point> *points, int length, int clusters)
+vector<Cluster> divideAndConquerClusters(vector<Point> &points, int clusters)
 {
-    if (length <= 1)
-        return;
-
-    int middle = length / 2;
-    vector<Point> leftPart(middle);
-    vector<Point> rightPart(length - middle);
-
-    int j = 0;
-    for (int i = 0; i < length; i++)
+    if (points.size() == clusters)
     {
-        if (i < middle)
-            leftPart[i] = (*points)[i]; // Dereference pointer
-        else
-        {
-            rightPart[j] = (*points)[i];
-            j++;
-        }
+        vector<Cluster> clusterCenters(clusters);
+        for (Point& p : points)
+            clusterCenters.push_back({p});
+        return clusterCenters;
     }
 
-    divideAndConquerClusters(&leftPart, middle, clusters);
-    divideAndConquerClusters(&rightPart, length - middle, clusters);
-    combineClusters(points, length, &leftPart, &rightPart, clusters);
+    // divide the vector into parts
+    int middle = points.size() / 2;
+    vector<Point> left(points.begin(), points.begin() + middle);
+    vector<Point> right(points.begin() + middle, points.end());
+
+    vector<Cluster> leftClusters = divideAndConquerClusters(left, clusters);
+    vector<Cluster> rightClusters = divideAndConquerClusters(right, clusters);
+    
+    vector<Cluster> combined = leftClusters;
+    combined.insert(combined.end(), rightClusters.begin(), rightClusters.end());
+
+    return mergeClusters(combined, clusters);
 }
 
 int main()
