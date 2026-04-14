@@ -87,7 +87,7 @@ vector<vector<Point>> iterativeImprovementClusters(vector<Point> &points, int cl
         if (noChange)
             break;
 
-
+        clusterCenters = newClusterCenters;
     } while (true);
 
     return clusteredPoints;
