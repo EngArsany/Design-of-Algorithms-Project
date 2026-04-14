@@ -1,134 +1,106 @@
 #include "ClustersHelper.hpp"
 using namespace std;
 
-vector<vector<Point>> bruteForceClusters(vector<Point> &points, int clusters)
+vector<Cluster> bruteForceClusters(const vector<Point> &points, int k)
 {
-    if (clusters == points.size() || clusters == 1) // Edge Cases
-        return {points};
+    if (isBaseCase(points, k))
+        return k == 1 ? vector<Cluster>{points} : eachPointAsCluster(points);
 
-    double maxDistance = calculateMaxDistance(points) / clusters;
-    vector<bool> pointTaken(points.size());
-    vector<vector<Point>> clusteredPoints(clusters);
+    double maxDistance = calculateMaxDistance(points) / k;
+    vector<bool> pointTaken(points.size(), false);
+    vector<Cluster> clusters(k);
+    int clusterIndex = k - 1;
 
-    for (int i = 0; i < points.size(); i++)
+    for (int i = 0; i < (int)points.size(); i++)
     {
-        if (clusters <= 0)
+        if (clusterIndex < 0)
             break;
         if (pointTaken[i])
             continue;
 
-        Point startPoint = points[i];
-        clusteredPoints[--clusters].push_back({startPoint}); // add point to a cluster
-        bool isLastCluster = (clusters == 0);
+        const Point &startPoint = points[i];
+        clusters[clusterIndex].push_back(startPoint);
+        bool isLastCluster = (clusterIndex == 0);
 
-        for (int j = i + 1; j < points.size(); j++)
+        for (int j = i + 1; j < (int)points.size(); j++)
         {
             if (pointTaken[i] || pointTaken[j])
                 continue;
-
-            Point endPoint = points[j];
-            double currentDistance = pointDistance(&startPoint, &endPoint);
-
-            if (currentDistance < maxDistance || isLastCluster)
+            double distance = startPoint.distanceTo(points[j]);
+            if (distance < maxDistance || isLastCluster)
             {
-                clusteredPoints[clusters].push_back({endPoint});
+                clusters[clusterIndex].push_back(points[j]);
                 pointTaken[j] = true;
             }
         }
+        clusterIndex--;
     }
-    return clusteredPoints;
+    return clusters;
 }
 
-vector<vector<Point>> iterativeImprovementClusters(vector<Point> &points, int clusters)
+vector<Cluster> iterativeImprovementClusters(const vector<Point> &points, int k)
 {
-    // Use K-means clustering
-    // The smallest move is to move a point to another cluster
+    if (isBaseCase(points, k))
+        return k == 1 ? vector<Cluster>{points} : eachPointAsCluster(points);
 
-    // Edge Cases
-    int numOfPoints = points.size();
-    if (clusters == numOfPoints || clusters == 1)
-        return {points};
+    vector<Point> centroids;
+    for (int i = 0; i < k; i++)
+        centroids.push_back(Point(rand() % 25, rand() % 25));
 
-    // Generate random clusters
-    vector<Point> clusterCenters;
-    for (int i = 0; i < clusters; i++)
-        clusterCenters.push_back(Point(rand() % 25, rand() % 25));
-
-    // Iterative Improvement Step
-    vector<Point> newClusterCenters = clusterCenters;
-    do
+    while (true)
     {
-        vector<vector<Point>> clusteredPoints(clusters);
-        clusteredPoints = addPointsToNearestCluster(points, clusterCenters);
+        vector<Cluster> clusters = assignPointsToNearestCluster(points, centroids);
 
-        // Find k-means
-        bool noChange = true;
-        for (int i = 0; i < clusters; i++)
+        vector<Point> newCentroids;
+        bool converged = true;
+        for (int i = 0; i < k; i++)
         {
-            newClusterCenters[i] = findMeanPoint(clusteredPoints[i]);
-            if (newClusterCenters[i] != clusterCenters[i])
-                noChange = false;
+            Point newCentroid = computeMeanPoint(clusters[i]);
+            if (newCentroid != centroids[i])
+                converged = false;
+            newCentroids.push_back(newCentroid);
         }
 
-        // Break if no better improvement
-        if (noChange)
-            return clusteredPoints;
-
-        clusterCenters = newClusterCenters;
-    } while (true);
-
-    return {{}};
+        if (converged)
+            return clusters;
+        centroids = newCentroids;
+    }
 }
 
-vector<Cluster> divideAndConquerClusters(vector<Point> &points, int clusters)
+vector<Cluster> divideAndConquerClusters(const vector<Point> &points, int k)
 {
-    if (points.size() <= clusters)
-    {
-        vector<Cluster> base;
-        for (Point &p : points)
-            base.push_back({p});
-        return base;
-    }
+    if ((int)points.size() <= k)
+        return eachPointAsCluster(points);
 
-    // divide the vector into parts
     int middle = points.size() / 2;
     vector<Point> left(points.begin(), points.begin() + middle);
     vector<Point> right(points.begin() + middle, points.end());
 
-    vector<Cluster> leftClusters = divideAndConquerClusters(left, clusters);
-    vector<Cluster> rightClusters = divideAndConquerClusters(right, clusters);
+    vector<Cluster> leftClusters = divideAndConquerClusters(left, k);
+    vector<Cluster> rightClusters = divideAndConquerClusters(right, k);
 
     vector<Cluster> combined = leftClusters;
     combined.insert(combined.end(), rightClusters.begin(), rightClusters.end());
 
-    vector<Cluster> merged = mergeClusters(combined, clusters);
-    return merged;
+    return mergeClusters(combined, k);
 }
 
 int main()
 {
-    // Assume points are given in an array
     vector<Point> points = {
-        Point(1, 2),
-        Point(3, 4),
-        Point(5, 6),
-        Point(7, 8),
-        Point(9, 10),
-        Point(11, 12),
-        Point(13, 14),
-        Point(15, 16),
-        Point(17, 18),
-        Point(19, 20),
-        Point(21, 22),
-        Point(23, 24)};
+        Point(1, 2),  Point(3, 4),  Point(5, 6),
+        Point(7, 8),  Point(9, 10), Point(11, 12),
+        Point(13, 14),Point(15, 16),Point(17, 18),
+        Point(19, 20),Point(21, 22),Point(23, 24)
+    };
 
-    vector<Cluster> clusteredPoints = divideAndConquerClusters(points, 3);
+    vector<Cluster> clusters = divideAndConquerClusters(points, 3);
 
-    for (int i = 0; i < clusteredPoints.size(); i++)
+    for (int i = 0; i < (int)clusters.size(); i++)
     {
-        cout << "Cluster number " << i + 1 << ":\n";
-        for (auto point : clusteredPoints[i])
-            point.print();
+        cout << "Cluster " << i + 1 << ":\n";
+        for (const Point &p : clusters[i])
+            p.print();
         cout << "\n";
     }
 }

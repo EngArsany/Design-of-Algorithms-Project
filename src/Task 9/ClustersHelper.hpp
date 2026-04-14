@@ -1,3 +1,4 @@
+#pragma once
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -5,151 +6,141 @@ class Point
 {
 private:
     double x, y;
-    double EPSILON = 1;
+    static constexpr double EPSILON = 1.0;
 
 public:
-    Point(double x, double y)
+    Point(double x, double y) : x(x), y(y) {}
+
+    double getX() const { return x; }
+    double getY() const { return y; }
+
+    double distanceTo(const Point &other) const
     {
-        this->x = x;
-        this->y = y;
+        double dx = x - other.x;
+        double dy = y - other.y;
+        return sqrt(dx * dx + dy * dy);
     }
+
     bool operator==(const Point &other) const
     {
-        bool equalX = abs(x - other.x) < EPSILON;
-        bool equalY = abs(y - other.y) < EPSILON;
-
-        return equalX && equalY;
+        return abs(x - other.x) < EPSILON && abs(y - other.y) < EPSILON;
     }
+
     bool operator!=(const Point &other) const
     {
-        bool equalX = abs(x - other.x) >= EPSILON;
-        bool equalY = abs(y - other.y) >= EPSILON;
-
-        return equalX && equalY;
-    }
-    double getX()
-    {
-        return x;
-    }
-    double getY()
-    {
-        return y;
+        return abs(x - other.x) >= EPSILON || abs(y - other.y) >= EPSILON;
     }
 
-    void print()
+    void print() const
     {
         cout << "(" << x << ", " << y << "), ";
     }
 };
+
 using Cluster = vector<Point>;
 
-double pointDistance(Point *a, Point *b)
-{ // root( (x1-x2)^2 - (y1-y2)^2 )
-    double differenceX = a->getX() - b->getX();
-    double differenceY = a->getY() - b->getY();
-    return sqrt(pow(differenceX, 2) + pow(differenceY, 2));
-}
-static int calculateMaxDistance(vector<Point> &points)
-{
-    double maxDistance = -1;
-    for (int i = 0; i < points.size(); i++)
-    {
-        for (int j = i; j < points.size(); j++)
-        {
-            Point *point_1 = &points[i];
-            Point *point_2 = &points[j];
+// --- Point utilities ---
 
-            double currentDistance = pointDistance(point_1, point_2);
-            maxDistance = max(maxDistance, currentDistance);
-        }
+Point computeMeanPoint(const vector<Point> &points)
+{
+    double totalX = 0, totalY = 0;
+    for (const Point &p : points)
+    {
+        totalX += p.getX();
+        totalY += p.getY();
     }
+    return Point(totalX / points.size(), totalY / points.size());
+}
+
+double calculateMaxDistance(const vector<Point> &points)
+{
+    double maxDistance = 0;
+    for (int i = 0; i < (int)points.size(); i++)
+        for (int j = i + 1; j < (int)points.size(); j++)
+            maxDistance = max(maxDistance, points[i].distanceTo(points[j]));
     return maxDistance;
 }
 
-bool isExist(const vector<Point> &points, Point a)
+bool containsPoint(const vector<Point> &points, const Point &target)
 {
-    for (size_t i = 0; i < points.size(); i++)
-    {
-        if (points[i] == a)
+    for (const Point &p : points)
+        if (p == target)
             return true;
-    }
     return false;
 }
 
-Point findMeanPoint(vector<Point> &points)
+// --- Cluster utilities ---
+
+vector<Cluster> eachPointAsCluster(const vector<Point> &points)
 {
-    double totalX = 0;
-    double totalY = 0;
-
-    for (Point point : points)
-    {
-        totalX += point.getX();
-        totalY += point.getY();
-    }
-
-    double meanX = totalX / points.size();
-    double meanY = totalY / points.size();
-    return Point(meanX, meanY);
-}
-vector<vector<Point>> addPointsToNearestCluster(vector<Point> &points, vector<Point> &clusterCenters)
-{
-    vector<vector<Point>> clusteredPoints;
-    for (Point point : points)
-    {
-        int nearestCluster;
-        double minDistance = INT_MAX;
-        for (int i = 0; i < clusterCenters.size(); i++)
-        {
-            double currentDistance = pointDistance(&point, &clusterCenters[i]);
-
-            if (currentDistance >= minDistance)
-                continue;
-
-            minDistance = currentDistance;
-            nearestCluster = i;
-        }
-        clusteredPoints[nearestCluster].push_back({point});
-    }
-    return clusteredPoints;
-}
-Point computeCentroid(Cluster &cluster)
-{
-    return findMeanPoint(cluster);
+    vector<Cluster> clusters;
+    for (const Point &p : points)
+        clusters.push_back({p});
+    return clusters;
 }
 
-double clusterDistance(Cluster &a, Cluster &b)
+bool isBaseCase(const vector<Point> &points, int k)
+{
+    return k == 1 || k >= (int)points.size();
+}
+
+Point computeCentroid(const Cluster &cluster)
+{
+    return computeMeanPoint(cluster);
+}
+
+double clusterDistance(const Cluster &a, const Cluster &b)
 {
     Point centroidA = computeCentroid(a);
     Point centroidB = computeCentroid(b);
-    return pointDistance(&centroidA, &centroidB);
+    return centroidA.distanceTo(centroidB);
 }
-vector<Cluster> mergeClusters(vector<Cluster> combinedClusters, int k)
+
+vector<Cluster> assignPointsToNearestCluster(const vector<Point> &points, const vector<Point> &centroids)
 {
-    while (combinedClusters.size() > k)
+    vector<Cluster> clusters(centroids.size());
+    for (const Point &point : points)
     {
-        int firstCluster = 0, secondCluster = 1;
-        double minDistance = clusterDistance(combinedClusters[firstCluster], combinedClusters[secondCluster]);
-
-        for (int i = 0; i < combinedClusters.size(); i++)
+        int nearestIndex = 0;
+        double minDistance = point.distanceTo(centroids[0]);
+        for (int i = 1; i < (int)centroids.size(); i++)
         {
-            for (int j = i + 1; j < combinedClusters.size(); j++)
+            double distance = point.distanceTo(centroids[i]);
+            if (distance < minDistance)
             {
-                double distance = clusterDistance(combinedClusters[i], combinedClusters[j]);
-                if (distance >= minDistance)
-                    continue;
-
                 minDistance = distance;
-                firstCluster = i;
-                secondCluster = j;
+                nearestIndex = i;
+            }
+        }
+        clusters[nearestIndex].push_back(point);
+    }
+    return clusters;
+}
+
+vector<Cluster> mergeClusters(vector<Cluster> clusters, int targetCount)
+{
+    while ((int)clusters.size() > targetCount)
+    {
+        int firstIndex = 0, secondIndex = 1;
+        double minDistance = clusterDistance(clusters[0], clusters[1]);
+
+        for (int i = 0; i < (int)clusters.size(); i++)
+        {
+            for (int j = i + 1; j < (int)clusters.size(); j++)
+            {
+                double distance = clusterDistance(clusters[i], clusters[j]);
+                if (distance < minDistance)
+                {
+                    minDistance = distance;
+                    firstIndex = i;
+                    secondIndex = j;
+                }
             }
         }
 
-        // Merge the second cluster into the first
-        for (Point &p : combinedClusters[secondCluster])
-            combinedClusters[firstCluster].push_back(p);
-
-        // Remove redundant cluster
-        combinedClusters.erase(combinedClusters.begin() + secondCluster);
+        for (const Point &p : clusters[secondIndex])
+            clusters[firstIndex].push_back(p);
+        clusters.erase(clusters.begin() + secondIndex);
     }
-    return combinedClusters;
+    return clusters;
 }
