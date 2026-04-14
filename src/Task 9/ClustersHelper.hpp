@@ -1,6 +1,5 @@
 #include <bits/stdc++.h>
 using namespace std;
-using Cluster = vector<Point>;
 
 class Point
 {
@@ -42,6 +41,7 @@ public:
         cout << "(" << x << ", " << y << "), ";
     }
 };
+using Cluster = vector<Point>;
 
 double pointDistance(Point *a, Point *b)
 { // root( (x1-x2)^2 - (y1-y2)^2 )
