@@ -90,7 +90,7 @@ Point findMeanPoint(vector<Point> &points)
     double meanY = totalY / points.size();
     return Point(meanX, meanY);
 }
-vector<vector<Point>> addPointsToNearestCluster(vector<Point> &points, vector<Point> clusterCenters)
+vector<vector<Point>> addPointsToNearestCluster(vector<Point> &points, vector<Point> &clusterCenters)
 {
     vector<vector<Point>> clusteredPoints;
     for (Point point : points)
