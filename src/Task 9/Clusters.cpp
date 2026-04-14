@@ -50,7 +50,7 @@ vector<vector<Point>> iterativeImprovementClusters(vector<Point> &points, int cl
     // Generate random clusters
     vector<Point> clusterCenters;
     for (int i = 0; i < clusters; i++)
-        clusterCenters.push_back(Point(rand() % 50, rand() % 50));
+        clusterCenters.push_back(Point(rand() % 25, rand() % 25));
 
     vector<vector<Point>> clusteredPoints(clusters);
     do
@@ -58,7 +58,8 @@ vector<vector<Point>> iterativeImprovementClusters(vector<Point> &points, int cl
         // Add point to nearest cluster
         for (Point point : points)
         {
-            double minDistance = -1;
+            int nearestCluster;
+            double minDistance = INT_MAX;
             for (int i = 0; i < clusters; i++)
             {
                 double currentDistance = pointDistance(&point, &clusterCenters[i]);
@@ -67,8 +68,9 @@ vector<vector<Point>> iterativeImprovementClusters(vector<Point> &points, int cl
                     continue;
 
                 minDistance = currentDistance;
-                clusteredPoints[i].push_back({point});
+                nearestCluster = i;
             }
+            clusteredPoints[nearestCluster].push_back({point});
         }
 
         // Find k-means (iterative improvement)
@@ -85,18 +87,8 @@ vector<vector<Point>> iterativeImprovementClusters(vector<Point> &points, int cl
         if (noChange)
             break;
 
+
     } while (true);
-
-    // Fill arbitrary clusters
-    vector<vector<Point>> clusteredPoints(clusters);
-    int currentCluster = 0;
-    for (int i = 0; i < numOfPoints; i++)
-    {
-        if (i == numOfPoints / clusters) // fix condition
-            currentCluster++;
-
-        clusteredPoints[i].push_back({points[i]});
-    }
 
     return clusteredPoints;
 }
@@ -122,7 +114,7 @@ int main()
         Point(21, 22),
         Point(23, 24)};
 
-    vector<vector<Point>> clusteredPoints = bruteForceClusters(points, 3);
+    vector<vector<Point>> clusteredPoints = iterativeImprovementClusters(points, 3);
 
     for (int i = 0; i < clusteredPoints.size(); i++)
     {
