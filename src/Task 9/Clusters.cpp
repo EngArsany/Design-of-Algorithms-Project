@@ -88,11 +88,10 @@ vector<Cluster> divideAndConquerClusters(const vector<Point> &points, int k)
 int main()
 {
     vector<Point> points = {
-        Point(1, 2),  Point(3, 4),  Point(5, 6),
-        Point(7, 8),  Point(9, 10), Point(11, 12),
-        Point(13, 14),Point(15, 16),Point(17, 18),
-        Point(19, 20),Point(21, 22),Point(23, 24)
-    };
+        Point(1, 2), Point(3, 4), Point(5, 6),
+        Point(7, 8), Point(9, 10), Point(11, 12),
+        Point(13, 14), Point(15, 16), Point(17, 18),
+        Point(19, 20), Point(21, 22), Point(23, 24)};
 
     vector<Cluster> clusters = divideAndConquerClusters(points, 3);
 
