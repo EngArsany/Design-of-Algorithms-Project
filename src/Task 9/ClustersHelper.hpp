@@ -63,3 +63,19 @@ bool isExist(const vector<Point> &points, Point a)
     }
     return false;
 }
+
+Point findMeanPoint(vector<Point> &points)
+{
+    double totalX = 0;
+    double totalY = 0;
+
+    for (Point point : points)
+    {
+        totalX += point.getX();
+        totalY = point.getY();
+    }
+
+    double meanX = totalX / points.size();
+    double meanY = totalY / points.size();
+    return Point(meanX, meanY);
+}
