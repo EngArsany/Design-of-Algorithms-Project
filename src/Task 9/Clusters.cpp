@@ -46,7 +46,7 @@ vector<vector<Point>> iterativeImprovementClusters(vector<Point> &points, int cl
 
     // Edge Cases
     int numOfPoints = points.size();
-    if (clusters == numOfPoints || clusters == 1) 
+    if (clusters == numOfPoints || clusters == 1)
         return {points};
 
     // Generate random clusters
@@ -80,8 +80,30 @@ vector<vector<Point>> iterativeImprovementClusters(vector<Point> &points, int cl
     return {{}};
 }
 
-void divideAndConquerClusters(vector<Point> &points, int clusters)
+void divideAndConquerClusters(vector<Point> *points, int length, int clusters)
 {
+    if (length <= 1)
+        return;
+
+    int middle = length / 2;
+    vector<Point> leftPart(middle);
+    vector<Point> rightPart(length - middle);
+
+    int j = 0;
+    for (int i = 0; i < length; i++)
+    {
+        if (i < middle)
+            leftPart[i] = (*points)[i]; // Dereference pointer
+        else
+        {
+            rightPart[j] = (*points)[i];
+            j++;
+        }
+    }
+
+    divideAndConquerClusters(&leftPart, middle, clusters);
+    divideAndConquerClusters(&rightPart, length - middle, clusters);
+    combineClusters(points, length, &leftPart, &rightPart, clusters);
 }
 
 int main()
