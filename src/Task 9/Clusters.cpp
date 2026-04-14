@@ -92,14 +92,22 @@ int main()
         Point(7, 8), Point(9, 10), Point(11, 12),
         Point(13, 14), Point(15, 16), Point(17, 18),
         Point(19, 20), Point(21, 22), Point(23, 24)};
+    int k = 3;
 
-    vector<Cluster> clusters = divideAndConquerClusters(points, 3);
-
-    for (int i = 0; i < (int)clusters.size(); i++)
+    auto printClusters = [](const vector<Cluster> &clusters, const string &algorithmName)
     {
-        cout << "Cluster " << i + 1 << ":\n";
-        for (const Point &p : clusters[i])
-            p.print();
+        cout << "=== " << algorithmName << " ===\n";
+        for (int i = 0; i < (int)clusters.size(); i++)
+        {
+            cout << "  Cluster " << i + 1 << ": ";
+            for (const Point &p : clusters[i])
+                p.print();
+            cout << "\n";
+        }
         cout << "\n";
-    }
+    };
+
+    printClusters(bruteForceClusters(points, k), "Brute Force");
+    printClusters(iterativeImprovementClusters(points, k), "Iterative Improvement (K-Means)");
+    printClusters(divideAndConquerClusters(points, k), "Divide & Conquer");
 }
