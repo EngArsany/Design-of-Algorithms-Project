@@ -52,9 +52,12 @@ vector<vector<Point>> iterativeImprovementClusters(vector<Point> &points, int cl
     for (int i = 0; i < clusters; i++)
         clusterCenters.push_back(Point(rand() % 25, rand() % 25));
 
-    vector<vector<Point>> clusteredPoints(clusters);
+    // Iterative Improvement Step
+    vector<Point> newClusterCenters = clusterCenters;
     do
     {
+        vector<vector<Point>> clusteredPoints(clusters);
+        
         // Add point to nearest cluster
         for (Point point : points)
         {
@@ -73,24 +76,23 @@ vector<vector<Point>> iterativeImprovementClusters(vector<Point> &points, int cl
             clusteredPoints[nearestCluster].push_back({point});
         }
 
-        // Find k-means (iterative improvement)
-        vector<Point> newClusterCenters = clusterCenters;
+        // Find k-means
         bool noChange = true;
         for (int i = 0; i < clusters; i++)
         {
             newClusterCenters[i] = findMeanPoint(clusteredPoints[i]);
-            if (!(newClusterCenters[i] == clusterCenters[i]))
+            if (newClusterCenters[i] != clusterCenters[i])
                 noChange = false;
         }
 
         // Break if no change
         if (noChange)
-            break;
+            return clusteredPoints;
 
         clusterCenters = newClusterCenters;
     } while (true);
 
-    return clusteredPoints;
+    return {{}};
 }
 
 void divideAndConquerClusters(vector<Point> &points, int clusters)
