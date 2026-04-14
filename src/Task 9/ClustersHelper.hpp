@@ -1,5 +1,6 @@
 #include <bits/stdc++.h>
 using namespace std;
+using Cluster = vector<Point>;
 
 class Point
 {
