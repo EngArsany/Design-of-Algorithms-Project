@@ -112,12 +112,45 @@ vector<vector<Point>> addPointsToNearestCluster(vector<Point> &points, vector<Po
     }
     return clusteredPoints;
 }
-Point computeCentroid(Cluster& cluster) {
+Point computeCentroid(Cluster &cluster)
+{
     return findMeanPoint(cluster);
 }
 
-double clusterDistance(Cluster& a, Cluster& b) {
+double clusterDistance(Cluster &a, Cluster &b)
+{
     Point centroidA = computeCentroid(a);
     Point centroidB = computeCentroid(b);
     return pointDistance(&centroidA, &centroidB);
+}
+vector<Cluster> mergeClusters(vector<Cluster> combinedClusters, int k)
+{
+    int numOfClusters = combinedClusters.size();
+    while (numOfClusters > k)
+    {
+        int firstCluster = 0, secondCluster = 1;
+        double minDistance = clusterDistance(combinedClusters[firstCluster], combinedClusters[secondCluster]);
+
+        for (int i = 0; i < numOfClusters; i++)
+        {
+            for (int j = i + 1; j < numOfClusters; j++)
+            {
+                double distance = clusterDistance(combinedClusters[i], combinedClusters[j]);
+                if (distance >= minDistance)
+                    continue;
+
+                minDistance = distance;
+                firstCluster = i;
+                secondCluster = j;
+            }
+        }
+
+        // Merge the second cluster into the first
+        for (Point &p : combinedClusters[secondCluster])
+            combinedClusters[firstCluster].push_back(p);
+
+        // Remove redundant cluster
+        combinedClusters.erase(combinedClusters.begin() + secondCluster);
+    }
+    return combinedClusters;
 }
