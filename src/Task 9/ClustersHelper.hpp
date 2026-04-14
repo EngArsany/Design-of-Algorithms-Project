@@ -20,6 +20,13 @@ public:
 
         return equalX && equalY;
     }
+    bool operator!=(const Point &other) const
+    {
+        bool equalX = abs(x - other.x) >= EPSILON;
+        bool equalY = abs(y - other.y) >= EPSILON;
+
+        return equalX && equalY;
+    }
     double getX()
     {
         return x;
