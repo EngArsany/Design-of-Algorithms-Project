@@ -83,7 +83,7 @@ Point findMeanPoint(vector<Point> &points)
     for (Point point : points)
     {
         totalX += point.getX();
-        totalY = point.getY();
+        totalY += point.getY();
     }
 
     double meanX = totalX / points.size();
