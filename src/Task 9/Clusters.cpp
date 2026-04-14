@@ -20,7 +20,7 @@ vector<vector<Point>> bruteForceClusters(vector<Point> &points, int clusters)
         Point startPoint = points[i];
         clusteredPoints[--clusters].push_back({startPoint}); // add point to a cluster
         bool isLastCluster = (clusters == 0);
-        
+
         for (int j = i + 1; j < points.size(); j++)
         {
             if (pointTaken[i] || pointTaken[j])
@@ -39,8 +39,66 @@ vector<vector<Point>> bruteForceClusters(vector<Point> &points, int clusters)
     return clusteredPoints;
 }
 
-void iterativeImprovementClusters(vector<Point> &points, int clusters)
+vector<vector<Point>> iterativeImprovementClusters(vector<Point> &points, int clusters)
 {
+    // Use K-means clustering
+    // The smallest move is to move a point to another cluster
+    int numOfPoints = points.size();
+    if (clusters == numOfPoints || clusters == 1) // Edge Cases
+        return {points};
+
+    // Generate random clusters
+    vector<Point> clusterCenters;
+    for (int i = 0; i < clusters; i++)
+        clusterCenters.push_back(Point(rand() % 50, rand() % 50));
+
+    vector<vector<Point>> clusteredPoints(clusters);
+    do
+    {
+        // Add point to nearest cluster
+        for (Point point : points)
+        {
+            double minDistance = -1;
+            for (int i = 0; i < clusters; i++)
+            {
+                double currentDistance = pointDistance(&point, &clusterCenters[i]);
+
+                if (currentDistance >= minDistance)
+                    continue;
+
+                minDistance = currentDistance;
+                clusteredPoints[i].push_back({point});
+            }
+        }
+
+        // Find k-means (iterative improvement)
+        vector<Point> newClusterCenters = clusterCenters;
+        bool noChange = true;
+        for (int i = 0; i < clusters; i++)
+        {
+            newClusterCenters[i] = findMeanPoint(clusteredPoints[i]);
+            if (!(newClusterCenters[i] == clusterCenters[i]))
+                noChange = false;
+        }
+
+        // Break if no change
+        if (noChange)
+            break;
+
+    } while (true);
+
+    // Fill arbitrary clusters
+    vector<vector<Point>> clusteredPoints(clusters);
+    int currentCluster = 0;
+    for (int i = 0; i < numOfPoints; i++)
+    {
+        if (i == numOfPoints / clusters) // fix condition
+            currentCluster++;
+
+        clusteredPoints[i].push_back({points[i]});
+    }
+
+    return clusteredPoints;
 }
 
 void divideAndConquerClusters(vector<Point> &points, int clusters)
