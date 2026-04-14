@@ -5,6 +5,7 @@ class Point
 {
 private:
     double x, y;
+    const double EPSILON = 0.1;
 
 public:
     Point(double x, double y)
@@ -14,7 +15,10 @@ public:
     }
     bool operator==(const Point &other) const
     {
-        return x == other.x && y == other.y;
+        bool equalX = abs(x - other.x) < EPSILON;
+        bool equalY = abs(y - other.y) < EPSILON;
+
+        return equalX && equalY;
     }
     double getX()
     {
