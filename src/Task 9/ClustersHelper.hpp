@@ -112,3 +112,12 @@ vector<vector<Point>> addPointsToNearestCluster(vector<Point> &points, vector<Po
     }
     return clusteredPoints;
 }
+Point computeCentroid(Cluster& cluster) {
+    return findMeanPoint(cluster);
+}
+
+double clusterDistance(Cluster& a, Cluster& b) {
+    Point centroidA = computeCentroid(a);
+    Point centroidB = computeCentroid(b);
+    return pointDistance(&centroidA, &centroidB);
+}
