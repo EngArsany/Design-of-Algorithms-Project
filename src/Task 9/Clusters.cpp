@@ -43,8 +43,10 @@ vector<vector<Point>> iterativeImprovementClusters(vector<Point> &points, int cl
 {
     // Use K-means clustering
     // The smallest move is to move a point to another cluster
+
+    // Edge Cases
     int numOfPoints = points.size();
-    if (clusters == numOfPoints || clusters == 1) // Edge Cases
+    if (clusters == numOfPoints || clusters == 1) 
         return {points};
 
     // Generate random clusters
@@ -57,24 +59,7 @@ vector<vector<Point>> iterativeImprovementClusters(vector<Point> &points, int cl
     do
     {
         vector<vector<Point>> clusteredPoints(clusters);
-        
-        // Add point to nearest cluster
-        for (Point point : points)
-        {
-            int nearestCluster;
-            double minDistance = INT_MAX;
-            for (int i = 0; i < clusters; i++)
-            {
-                double currentDistance = pointDistance(&point, &clusterCenters[i]);
-
-                if (currentDistance >= minDistance)
-                    continue;
-
-                minDistance = currentDistance;
-                nearestCluster = i;
-            }
-            clusteredPoints[nearestCluster].push_back({point});
-        }
+        clusteredPoints = addPointsToNearestCluster(points, clusterCenters);
 
         // Find k-means
         bool noChange = true;
@@ -85,7 +70,7 @@ vector<vector<Point>> iterativeImprovementClusters(vector<Point> &points, int cl
                 noChange = false;
         }
 
-        // Break if no change
+        // Break if no better improvement
         if (noChange)
             return clusteredPoints;
 
