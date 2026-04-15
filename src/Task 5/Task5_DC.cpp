@@ -1,6 +1,6 @@
 #include <iostream>
 using namespace std;
-
+// i think it is not accurate
 void shoot(int position)
 {
     cout << "Shoot at position: " << position << endl;
@@ -28,13 +28,12 @@ int main()
     cout << "Enter number of spots:" << endl;
     cin >> spots;
 
-    if (spots <= 1)
     {
         cout << "Need at least 2 spots." << endl;
         return 0;
     }
 
-    cout << "\nSequence of shots:\n";
+    cout << "Sequence of shots: " << endl;
     hunt(1, spots);
     return 0;
 }
