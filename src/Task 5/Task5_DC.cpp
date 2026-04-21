@@ -28,6 +28,7 @@ int main()
     cout << "Enter number of spots:" << endl;
     cin >> spots;
 
+    if (spots < 2)
     {
         cout << "Need at least 2 spots." << endl;
         return 0;
