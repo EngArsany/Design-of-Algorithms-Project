@@ -1,94 +1,117 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-int targetPosition = 0;
-
-// bool DCAlgorithm(int spots, int currentPosition, bool left)
-// {
-//     if (spots == 1)
-//         return true;
-
-//     // Divide
-//     do
-//     {
-//         DCAlgorithm();
-//         DCAlgorithm();
-//     } while (!found);
-
-//     // Conquer
-
-// }
-
-bool shotAndFound(int position)
+void hunt(int L, int R, vector<int> &sequence)
 {
-    return position == targetPosition;
+    if (L > R)
+        return;
+
+    if (L == R)
+    {
+        sequence.push_back(L);
+        return;
+    }
+
+    // DIVIDE
+    int mid = (L + R) / 2;
+
+    // CONQUER LEFT: Sweep [L, mid]
+    for (int i = L; i <= mid; i++)
+        sequence.push_back(i);
+
+    // CONQUER RIGHT: Recurse
+    hunt(mid + 1, R, sequence);
 }
 
-void moveTarget(int spots)
+vector<int> buildSequence(int spots)
 {
-    bool moveRight = rand() % 2;
-    // 0 : move left
-    // 1 : move right
+    vector<int> seq;
 
-    // Edge cases (literally)
-    if (targetPosition == 1)
-        moveRight = true; // move right
-    else if (targetPosition == spots)
-        moveRight = false; // move left
+    // BASE CASE: n = 2
+    if (spots == 2)
+    {
+        seq = {1, 1};
+        return seq;
+    }
 
-    targetPosition = (moveRight) ? targetPosition + 1 : targetPosition - 1;
+    // PHASE 1: Covers one parity
+    hunt(2, spots - 1, seq);
+
+    // DUMMY SHOT: Shift parity for even n
+    if (spots % 2 == 0)
+        seq.push_back(1);
+
+    // PHASE 2: Covers other parity
+    vector<int> phase2;
+    hunt(2, spots - 1, phase2);
+    seq.insert(seq.end(), phase2.begin(), phase2.end());
+
+    return seq;
+}
+
+// ===== EXHAUSTIVE TESTER =====
+bool testFromStart(int start, int spots, vector<int> &sequence)
+{
+    set<int> possible;
+    possible.insert(start);
+
+    for (int t = 0; t < (int)sequence.size(); t++)
+    {
+        possible.erase(sequence[t]);
+
+        if (possible.empty())
+            return true;
+
+        set<int> next;
+        for (int p : possible)
+        {
+            if (p - 1 >= 1)
+                next.insert(p - 1);
+            if (p + 1 <= spots)
+                next.insert(p + 1);
+        }
+        possible = next;
+    }
+    return false;
+}
+
+bool exhaustiveTest(int spots, vector<int> &sequence)
+{
+    bool allPass = true;
+    for (int start = 1; start <= spots; start++)
+    {
+        if (!testFromStart(start, spots, sequence))
+        {
+            cout << "  FAILED for start=" << start << endl;
+            allPass = false;
+        }
+    }
+    return allPass;
 }
 
 int main()
 {
-    bool targetFound = false;
+    cout << "===== EXHAUSTIVE TESTING n=2 to n=10 =====" << endl;
+    cout << endl;
 
-    cout << "How many hiding spots? ";
-    int spots;
-    cin >> spots;
-
-    targetPosition = rand() % spots;
-    if (targetPosition == 0)
-        targetPosition = 1;
-
-    // for (int i = 0; i < 10; i++)
-    // {
-    //     cout << targetPosition << endl;
-    //     moveTarget(spots);
-    // }
-
-    int currentPosition = 2;
-    int minimumPosition = 2;
-    int maximumPosition = spots - 1;
-    bool moveRight = true;
-    vector<int> sequence;
-    while (true)
+    for (int spots = 2; spots <= 10; spots++)
     {
-        targetFound = shotAndFound(currentPosition);
-        sequence.push_back(currentPosition);
+        vector<int> seq = buildSequence(spots);
 
-        if (currentPosition == maximumPosition)
-        {
-            targetFound = shotAndFound(currentPosition);
+        cout << "n=" << spots << "  Shots=" << seq.size()
+             << "  Seq: ";
+        for (int s : seq)
+            cout << s << " ";
+        cout << endl;
 
-            moveRight = false;
-        }
-        else if (currentPosition == minimumPosition)
-        {
-            targetFound = shotAndFound(currentPosition);
+        if (exhaustiveTest(spots, seq))
+            cout << "  -> ALL STARTING POSITIONS PASS ✅"
+                 << endl;
+        else
+            cout << "  -> FAIL ❌" << endl;
 
-            moveRight = true;
-        }
-
-        if (targetFound)
-        {
-            cout << "targetFound" << endl;
-            break;
-        }
-        currentPosition = moveRight ? currentPosition + 1 : currentPosition - 1;
+        cout << endl;
     }
 
-    cout << "Sequence:" << endl;
-    for (auto i : sequence)
-        cout << i << endl;
+    return 0;
 }
