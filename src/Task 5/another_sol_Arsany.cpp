@@ -3,17 +3,25 @@ using namespace std;
 
 int targetPosition = 0;
 
-bool shoot(int spots, int currentPosition)
+// bool DCAlgorithm(int spots, int currentPosition, bool left)
+// {
+//     if (spots == 1)
+//         return true;
+
+//     // Divide
+//     do
+//     {
+//         DCAlgorithm();
+//         DCAlgorithm();
+//     } while (!found);
+
+//     // Conquer
+
+// }
+
+bool shotAndFound(int position)
 {
-    if (spots == 1)
-        return true;
-
-    // Divide
-    
-
-
-
-    // Conquer
+    return position == targetPosition;
 }
 
 void moveTarget(int spots)
@@ -28,7 +36,7 @@ void moveTarget(int spots)
     else if (targetPosition == spots)
         moveRight = false; // move left
 
-    targetPosition = (moveRight) ? targetPosition+1 : targetPosition-1;
+    targetPosition = (moveRight) ? targetPosition + 1 : targetPosition - 1;
 }
 
 int main()
@@ -43,15 +51,44 @@ int main()
     if (targetPosition == 0)
         targetPosition = 1;
 
-    for (int i = 0; i < 10; i++)
+    // for (int i = 0; i < 10; i++)
+    // {
+    //     cout << targetPosition << endl;
+    //     moveTarget(spots);
+    // }
+
+    int currentPosition = 2;
+    int minimumPosition = 2;
+    int maximumPosition = spots - 1;
+    bool moveRight = true;
+    vector<int> sequence;
+    while (true)
     {
-        cout << targetPosition << endl;
-        moveTarget(spots);
+        targetFound = shotAndFound(currentPosition);
+        sequence.push_back(currentPosition);
+
+        if (currentPosition == maximumPosition)
+        {
+            targetFound = shotAndFound(currentPosition);
+
+            moveRight = false;
+        }
+        else if (currentPosition == minimumPosition)
+        {
+            targetFound = shotAndFound(currentPosition);
+
+            moveRight = true;
+        }
+
+        if (targetFound)
+        {
+            cout << "targetFound" << endl;
+            break;
+        }
+        currentPosition = moveRight ? currentPosition + 1 : currentPosition - 1;
     }
 
-    // do
-    // {
-    //     targetFound = shoot();
-    //     moveTarget(targetFound, spots);
-    // } while (!targetFound);
+    cout << "Sequence:" << endl;
+    for (auto i : sequence)
+        cout << i << endl;
 }
