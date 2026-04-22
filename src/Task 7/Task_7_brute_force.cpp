@@ -7,8 +7,14 @@ using namespace std;
 int main()
 {
     int n;
+    cout << "enter number of jobs: " << endl;
     cin >> n;
-    vector<int> t(n), p(n), d(n), result(n), job(n);
+    cout << "enter: " << endl;
+    cout << "(time) | (penalty) | (deadline) of each job " << endl;
+
+    vector<int>
+        t(n),
+        p(n), d(n), result(n), job(n);
     int time = 0, total_penalties, min_penalties = INT_MAX;
 
     for (int i = 0; i < n; i++)
