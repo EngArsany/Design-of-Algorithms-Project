@@ -11,18 +11,20 @@ pair<vector<int>, vector<int>> hunt(int L, int R)
 
     int mid = (L + R) / 2;
 
-    auto [L_forward, L_backward] = hunt(L, mid);
-    auto [R_forkward, R_backward] = hunt(mid + 1, R);
+    auto [left_fwd, left_bwd] = hunt(L, mid);
+    auto [right_fwd, right_bwd] = hunt(mid + 1, R);
 
+    // Combine step
     vector<int> forward, backward;
-    for (int x : L_forward)
+
+    for (int x : left_fwd)
         forward.push_back(x);
-    for (int x : R_forkward)
+    for (int x : right_fwd)
         forward.push_back(x);
 
-    for (int x : R_backward)
+    for (int x : right_bwd)
         backward.push_back(x);
-    for (int x : L_backward)
+    for (int x : left_bwd)
         backward.push_back(x);
 
     return {forward, backward};
@@ -33,12 +35,12 @@ vector<int> build_sequnce(int n)
     if (n <= 2)
         return vector<int>(n, 1);
 
-    auto [forward, backward] = hunt(2, n - 1);
+    auto [fwd, bwd] = hunt(2, n - 1);
 
     vector<int> result;
-    for (int x : forward)
+    for (int x : fwd)
         result.push_back(x);
-    for (int x : backward)
+    for (int x : bwd)
         result.push_back(x);
 
     return result;
@@ -47,16 +49,20 @@ vector<int> build_sequnce(int n)
 int main()
 {
     int n;
-    cout << "Enter no. of holes (n > 1): ";
+    cout << "Enter number of holes (n > 1): ";
     cin >> n;
 
     vector<int> seq = build_sequnce(n);
 
-    cout << "sequence: ";
-    for (int i = 0; i < seq.size(); i++)
-        cout << seq[i] << " ";
+    cout << "Inspection sequence: { ";
+    for (int i = 0; i < (int)seq.size(); i++)
+    {
+        if (i > 0)
+            cout << ", ";
+        cout << seq[i];
+    }
+    cout << " }" << endl;
 
-    cout << endl;
     cout << "Max shots needed: " << seq.size() << endl;
 
     return 0;
