@@ -2,48 +2,47 @@
 #include <vector>
 using namespace std;
 
-void hunt(int l, int h, vector<int> &fwd)
+void hunt(int lowerLimit, int higherLimit, vector<int> &forwardSequence)
 {
-    if (l > h)
+    // Base cases
+    if (lowerLimit > higherLimit)
         return;
-    if (l == h)
+    if (lowerLimit == higherLimit)
     {
-        fwd.push_back(l);
+        forwardSequence.push_back(lowerLimit);
         return;
     }
 
-    int mid = (l + h) / 2;
-    hunt(l, mid, fwd);     // conquer left
-    hunt(mid + 1, h, fwd); // conquer right
+    int mid = (lowerLimit + higherLimit) / 2;
+    hunt(lowerLimit, mid, forwardSequence);     // conquer left
+    hunt(mid + 1, higherLimit, forwardSequence); // conquer right
+    
     // combine: left result + right result (already in order)
 }
 
 int main()
 {
-    int n;
     cout << "Enter no. of spots (n > 1): ";
-    cin >> n;
+    int spots;
+    cin >> spots;
 
-    if (n == 2)
+    if (spots == 2)
     {
         cout << "sequence: 1 1" << endl;
         cout << "Max shots needed : 2 " << endl;
         return 0;
     }
 
-    vector<int> fwd;
-    hunt(2, n - 1, fwd);
+    vector<int> forwardSequence;
+    hunt(2, spots - 1, forwardSequence);
+    vector<int> backwardSequence(forwardSequence.rbegin(), forwardSequence.rend()); // backward = reverse of forward
 
-    vector<int> bwd(fwd.rbegin(), fwd.rend()); // backward = reverse of forward
-
-    cout << "sequence: ";
-    for (int x : fwd)
+    cout << "sequence:";
+    for (int x : forwardSequence)
         cout << " " << x;
-
-    for (int x : bwd)
+    for (int x : backwardSequence)
         cout << " " << x;
     cout << endl;
-    cout << "Max shots needed: " << fwd.size() * 2 << endl;
 
-    return 0;
+    cout << "Max shots needed: " << forwardSequence.size() * 2 << endl;
 }
