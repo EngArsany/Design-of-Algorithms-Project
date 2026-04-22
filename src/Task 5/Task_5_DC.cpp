@@ -14,9 +14,9 @@ void hunt(int lowerLimit, int higherLimit, vector<int> &forwardSequence)
     }
 
     int mid = (lowerLimit + higherLimit) / 2;
-    hunt(lowerLimit, mid, forwardSequence);     // conquer left
+    hunt(lowerLimit, mid, forwardSequence);      // conquer left
     hunt(mid + 1, higherLimit, forwardSequence); // conquer right
-    
+
     // combine: left result + right result (already in order)
 }
 
@@ -35,7 +35,7 @@ int main()
 
     vector<int> forwardSequence;
     hunt(2, spots - 1, forwardSequence);
-    vector<int> backwardSequence(forwardSequence.rbegin(), forwardSequence.rend()); // backward = reverse of forward
+    vector<int> backwardSequence(forwardSequence.rbegin(), forwardSequence.rend());
 
     cout << "sequence:";
     for (int x : forwardSequence)
