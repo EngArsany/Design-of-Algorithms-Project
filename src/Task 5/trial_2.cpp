@@ -2,19 +2,21 @@
 #include <vector>
 using namespace std;
 
-void hunt(int l, int h, vector<int> &fwd)
+void hunt(int lowerLimit, int higherLimit, vector<int> &forwardSequence)
 {
-    if (l > h)
+    // Base cases
+    if (lowerLimit > higherLimit)
         return;
-    if (l == h)
+    if (lowerLimit == higherLimit)
     {
-        fwd.push_back(l);
+        forwardSequence.push_back(lowerLimit);
         return;
     }
 
-    int mid = (l + h) / 2;
-    hunt(l, mid, fwd);     // conquer left
-    hunt(mid + 1, h, fwd); // conquer right
+    int mid = (lowerLimit + higherLimit) / 2;
+    hunt(lowerLimit, mid, forwardSequence);     // conquer left
+    hunt(mid + 1, higherLimit, forwardSequence); // conquer right
+    
     // combine: left result + right result (already in order)
 }
 
