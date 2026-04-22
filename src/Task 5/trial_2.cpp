@@ -21,7 +21,7 @@ void hunt(int l, int h, vector<int> &fwd)
 int main()
 {
     int n;
-    cout << "Enter no. of holes (n > 1): ";
+    cout << "Enter no. of spots (n > 1): ";
     cin >> n;
 
     if (n == 2)
