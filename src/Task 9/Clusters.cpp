@@ -75,17 +75,17 @@ vector<Cluster> divideAndConquerClusters(const vector<Point> &points, int k)
         return eachPointAsCluster(points);
 
     int middle = points.size() / 2;
-    vector<Point> left(points.begin(), points.begin() + middle);
-    vector<Point> right(points.begin() + middle, points.end());
+    vector<Point> leftPoints(points.begin(), points.begin() + middle);
+    vector<Point> rightPoints(points.begin() + middle, points.end());
 
-    int leftK = k / 2;
-    int rightK = k - leftK; 
-    vector<Cluster> leftClusters = divideAndConquerClusters(left, leftK);
-    vector<Cluster> rightClusters = divideAndConquerClusters(right, rightK);
+    int leftAmount = k / 2;
+    int rightAmount = k - leftAmount;
+    vector<Cluster> leftClusters = divideAndConquerClusters(leftPoints, leftAmount);
+    vector<Cluster> rightClusters = divideAndConquerClusters(rightPoints, rightAmount);
 
-    vector<Cluster> combined = leftClusters;
-    combined.insert(combined.end(), rightClusters.begin(), rightClusters.end());
-    return combined;  
+    vector<Cluster> combinedClusters = leftClusters;
+    combinedClusters.insert(combinedClusters.end(), rightClusters.begin(), rightClusters.end());
+    return combinedClusters;
 }
 
 int main()
