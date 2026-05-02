@@ -6,35 +6,26 @@ vector<Cluster> bruteForceClusters(const vector<Point> &points, int k)
     if (isBaseCase(points, k))
         return k == 1 ? vector<Cluster>{points} : eachPointAsCluster(points);
 
-    double maxDistance = calculateMaxDistance(points) / k;
-    vector<bool> pointTaken(points.size(), false);
-    vector<Cluster> clusters(k);
-    int clusterIndex = k - 1;
+    vector<vector<int>> allPartitions;
+    vector<int> assignment(points.size(), 0);
+    generateAllAssignments(points, 0, assignment, k, 0, allPartitions);
+    cout << "Total partitions: " << allPartitions.size() << "\n";
 
-    for (int i = 0; i < (int)points.size(); i++)
+    double bestScore = INT_MAX; // minimum distance to centroid
+    vector<int> bestAssignment;
+    for (const vector<int> &partition : allPartitions)
     {
-        if (clusterIndex < 0)
-            break;
-        if (pointTaken[i])
-            continue;
-
-        const Point &startPoint = points[i];
-        clusters[clusterIndex].push_back(startPoint);
-        bool isLastCluster = (clusterIndex == 0);
-
-        for (int j = i + 1; j < (int)points.size(); j++)
+        double score = calculatePartitionScore(points, partition, k);
+        if (score < bestScore)
         {
-            if (pointTaken[i] || pointTaken[j])
-                continue;
-            double distance = startPoint.distanceTo(points[j]);
-            if (distance < maxDistance || isLastCluster)
-            {
-                clusters[clusterIndex].push_back(points[j]);
-                pointTaken[j] = true;
-            }
+            bestScore = score;
+            bestAssignment = partition;
         }
-        clusterIndex--;
     }
+
+    vector<Cluster> clusters(k);
+    for (int i = 0; i < (int)points.size(); i++)
+        clusters[bestAssignment[i]].push_back(points[i]);
     return clusters;
 }
 
@@ -93,17 +84,15 @@ int main()
     vector<Point> points = {
         Point(1, 2), Point(3, 4), Point(5, 6),
         Point(7, 8), Point(9, 10), Point(11, 12),
-        Point(13, 14), Point(15, 16), Point(17, 18),
-        Point(19, 20), Point(21, 22), Point(23, 24)};
-    int k = 3;
+        Point(13, 14), Point(15, 16), Point(17, 18), Point{19, 20}};
 
     vector<int> testCases = {2, 3, 4, 5};
     for (int test : testCases)
     {
         cout << "========== Testing for " << test << " Clusters ==========\n";
-        printClusters(bruteForceClusters(points, k), "Brute Force");
-        printClusters(iterativeImprovementClusters(points, k), "Iterative Improvement (K-Means)");
-        printClusters(divideAndConquerClusters(points, k), "Divide & Conquer");
+        printClusters(bruteForceClusters(points, test), "Brute Force");
+        printClusters(iterativeImprovementClusters(points, test), "Iterative Improvement (K-Means)");
+        printClusters(divideAndConquerClusters(points, test), "Divide & Conquer");
         cout << "\n";
     }
 }

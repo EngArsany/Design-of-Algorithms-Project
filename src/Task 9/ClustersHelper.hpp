@@ -129,3 +129,66 @@ void printClusters(const vector<Cluster> &clusters, const string &algorithmName)
     }
     cout << "\n";
 }
+
+// Using Stirling numbers of the second kind
+void generateAllAssignments(
+    const vector<Point> &points,
+    int index,
+    vector<int> &assignment,
+    int k,
+    int usedClusters,
+    vector<vector<int>> &allAssignments)
+{
+    int n = points.size();
+    
+    // Pruning: not enough remaining points to fill unused clusters
+    int remaining = n - index;
+    int neededClusters = k - usedClusters;
+    if (remaining < neededClusters)
+        return;
+    
+    // All points assigned
+    if (index == n) {
+        // Only consider assignments that use exactly k clusters
+        if (usedClusters == k) {
+            allAssignments.push_back(assignment);
+        }
+        return;
+    }
+    
+    // For the first point, always assign to cluster 0 to avoid symmetric duplicates
+    if (index == 0) {
+        assignment[index] = 0;
+        generateAllAssignments(points, index + 1, assignment, k, 1, allAssignments);
+        return;
+    }
+    
+    // Try assigning current point to existing clusters (0 to usedClusters-1)
+    for (int cluster = 0; cluster < usedClusters; cluster++) {
+        assignment[index] = cluster;
+        generateAllAssignments(points, index + 1, assignment, k, usedClusters, allAssignments);
+    }
+    
+    // Try assigning current point to a new cluster (if we haven't used all k clusters yet)
+    if (usedClusters < k) {
+        assignment[index] = usedClusters;
+        generateAllAssignments(points, index + 1, assignment, k, usedClusters + 1, allAssignments);
+    }
+}
+
+// Score is evaluated as sum of distances to centroid
+double calculatePartitionScore(const vector<Point> &points, const vector<int> &assignment, int k)
+{
+    vector<Cluster> clusters(k);
+    for (int i = 0; i < (int)points.size(); i++)
+        clusters[assignment[i]].push_back(points[i]);
+
+    double totalScore = 0;
+    for (const Cluster &cluster : clusters)
+    {
+        Point centroid = computeCentroid(cluster);
+        for (const Point &p : cluster)
+            totalScore += p.distanceTo(centroid);
+    }
+    return totalScore;
+}
