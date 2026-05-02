@@ -8,7 +8,7 @@ vector<Cluster> bruteForceClusters(const vector<Point> &points, int k)
 
     vector<vector<int>> allPartitions;
     vector<int> assignment(points.size(), 0);
-    generateAllAssignments(points, 0, assignment, k, 0, allPartitions);
+    generateAllCombinations(points, 0, assignment, k, 0, allPartitions);
 
     double bestScore = INT_MAX; // minimum distance to centroid
     vector<int> bestAssignment;
