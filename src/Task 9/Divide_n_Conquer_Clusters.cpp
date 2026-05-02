@@ -1,6 +1,34 @@
 #include "ClustersHelper.hpp"
 using namespace std;
 
+vector<Cluster> mergeClusters(vector<Cluster> clusters, int targetCount)
+{
+    while ((int)clusters.size() > targetCount)
+    {
+        int firstIndex = 0, secondIndex = 1;
+        double minDistance = clusterDistance(clusters[0], clusters[1]);
+
+        for (int i = 0; i < (int)clusters.size(); i++)
+        {
+            for (int j = i + 1; j < (int)clusters.size(); j++)
+            {
+                double distance = clusterDistance(clusters[i], clusters[j]);
+                if (distance < minDistance)
+                {
+                    minDistance = distance;
+                    firstIndex = i;
+                    secondIndex = j;
+                }
+            }
+        }
+
+        for (const Point &p : clusters[secondIndex])
+            clusters[firstIndex].push_back(p);
+        clusters.erase(clusters.begin() + secondIndex);
+    }
+    return clusters;
+}
+
 vector<Cluster> divideAndConquerClusters(const vector<Point> &points, int k)
 {
     if ((int)points.size() <= k)
