@@ -117,9 +117,8 @@ vector<Cluster> assignPointsToNearestCluster(const vector<Point> &points, const 
     return clusters;
 }
 
-void printClusters(const vector<Cluster> &clusters, const string &algorithmName)
+void printClusters(const vector<Cluster> &clusters)
 {
-    cout << "=== " << algorithmName << " ===\n";
     for (int i = 0; i < (int)clusters.size(); i++)
     {
         cout << "  Cluster " << i + 1 << ": ";
@@ -128,72 +127,6 @@ void printClusters(const vector<Cluster> &clusters, const string &algorithmName)
         cout << "\n";
     }
     cout << "\n";
-}
-
-// Using Stirling numbers of the second kind
-void generateAllCombinations(
-    const vector<Point> &points,
-    int index,
-    vector<int> &combination,
-    int k,
-    int usedClusters,
-    vector<vector<int>> &allAssignments)
-{
-    int n = points.size();
-
-    // Prune when not enough remaining points
-    int remaining = n - index;
-    int neededClusters = k - usedClusters;
-    if (remaining < neededClusters)
-        return;
-
-    // Return when all points assigned
-    if (index == n)
-    {
-        if (usedClusters == k) // Only assignments that have filled clusters
-            allAssignments.push_back(combination);
-
-        return;
-    }
-
-    // Always assign to cluster 0 to avoid symmetric duplicates
-    if (index == 0)
-    {
-        combination[index] = 0;
-        generateAllCombinations(points, index + 1, combination, k, 1, allAssignments);
-        return;
-    }
-
-    // Assign to existing clusters
-    for (int cluster = 0; cluster < usedClusters; cluster++)
-    {
-        combination[index] = cluster;
-        generateAllCombinations(points, index + 1, combination, k, usedClusters, allAssignments);
-    }
-
-    // Assign to new cluster if there are any
-    if (usedClusters < k)
-    {
-        combination[index] = usedClusters;
-        generateAllCombinations(points, index + 1, combination, k, usedClusters + 1, allAssignments);
-    }
-}
-
-// Score is evaluated as sum of distances to centroid
-double calculatePartitionScore(const vector<Point> &points, const vector<int> &combination, int k)
-{
-    vector<Cluster> clusters(k);
-    for (int i = 0; i < (int)points.size(); i++)
-        clusters[combination[i]].push_back(points[i]);
-
-    double totalScore = 0;
-    for (const Cluster &cluster : clusters)
-    {
-        Point centroid = computeCentroid(cluster);
-        for (const Point &point : cluster)
-            totalScore += point.distanceTo(centroid);
-    }
-    return totalScore;
 }
 
 vector<Cluster> mergeClusters(vector<Cluster> clusters, int targetCount)
