@@ -29,10 +29,8 @@ int main()
     vector<int> testCases = {2, 3, 4, 5};
     for (int test : testCases)
     {
-        cout << "========== Testing for " << test << " Clusters ==========\n";
-        printClusters(bruteForceClusters(points, test), "Brute Force");
-        printClusters(iterativeImprovementClusters(points, test), "Iterative Improvement (K-Means)");
-        printClusters(divideAndConquerClusters(points, test), "Divide & Conquer");
+        cout << "========== Divide & Conquer Testing for " << test << " Clusters ==========\n";
+        printClusters(divideAndConquerClusters(points, test));
         cout << "\n";
     }
 }
