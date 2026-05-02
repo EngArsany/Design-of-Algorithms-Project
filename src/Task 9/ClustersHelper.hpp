@@ -116,3 +116,16 @@ vector<Cluster> assignPointsToNearestCluster(const vector<Point> &points, const 
     }
     return clusters;
 }
+
+void printClusters(const vector<Cluster> &clusters, const string &algorithmName)
+{
+    cout << "=== " << algorithmName << " ===\n";
+    for (int i = 0; i < (int)clusters.size(); i++)
+    {
+        cout << "  Cluster " << i + 1 << ": ";
+        for (const Point &p : clusters[i])
+            p.print();
+        cout << "\n";
+    }
+    cout << "\n";
+}

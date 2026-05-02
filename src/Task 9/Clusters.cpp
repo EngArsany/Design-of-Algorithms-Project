@@ -97,20 +97,13 @@ int main()
         Point(19, 20), Point(21, 22), Point(23, 24)};
     int k = 3;
 
-    auto printClusters = [](const vector<Cluster> &clusters, const string &algorithmName)
+    vector<int> testCases = {2, 3, 4, 5};
+    for (int test : testCases)
     {
-        cout << "=== " << algorithmName << " ===\n";
-        for (int i = 0; i < (int)clusters.size(); i++)
-        {
-            cout << "  Cluster " << i + 1 << ": ";
-            for (const Point &p : clusters[i])
-                p.print();
-            cout << "\n";
-        }
+        cout << "========== Testing for " << test << " Clusters ==========\n";
+        printClusters(bruteForceClusters(points, k), "Brute Force");
+        printClusters(iterativeImprovementClusters(points, k), "Iterative Improvement (K-Means)");
+        printClusters(divideAndConquerClusters(points, k), "Divide & Conquer");
         cout << "\n";
-    };
-
-    printClusters(bruteForceClusters(points, k), "Brute Force");
-    printClusters(iterativeImprovementClusters(points, k), "Iterative Improvement (K-Means)");
-    printClusters(divideAndConquerClusters(points, k), "Divide & Conquer");
+    }
 }
