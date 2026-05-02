@@ -52,23 +52,6 @@ Point computeCentroid(const vector<Point> &points)
     return Point(totalX / points.size(), totalY / points.size());
 }
 
-double calculateMaxDistance(const vector<Point> &points)
-{
-    double maxDistance = 0;
-    for (int i = 0; i < (int)points.size(); i++)
-        for (int j = i + 1; j < (int)points.size(); j++)
-            maxDistance = max(maxDistance, points[i].distanceTo(points[j]));
-    return maxDistance;
-}
-
-bool containsPoint(const vector<Point> &points, const Point &target)
-{
-    for (const Point &p : points)
-        if (p == target)
-            return true;
-    return false;
-}
-
 // --- Cluster utilities ---
 
 vector<Cluster> eachPointAsCluster(const vector<Point> &points)
