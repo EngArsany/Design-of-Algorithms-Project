@@ -9,23 +9,26 @@ vector<Cluster> bruteForceClusters(const vector<Point> &points, int k)
     vector<vector<int>> allPartitions;
     vector<int> assignment(points.size(), 0);
     generateAllAssignments(points, 0, assignment, k, 0, allPartitions);
-    cout << "Total partitions: " << allPartitions.size() << "\n";
 
     double bestScore = INT_MAX; // minimum distance to centroid
     vector<int> bestAssignment;
     for (const vector<int> &partition : allPartitions)
     {
         double score = calculatePartitionScore(points, partition, k);
-        if (score < bestScore)
-        {
-            bestScore = score;
-            bestAssignment = partition;
-        }
+        if (score >= bestScore)
+            continue;
+
+        bestScore = score;
+        bestAssignment = partition;
     }
 
     vector<Cluster> clusters(k);
-    for (int i = 0; i < (int)points.size(); i++)
-        clusters[bestAssignment[i]].push_back(points[i]);
+    for (int i = 0; i < points.size(); i++)
+    {
+        auto cluster = bestAssignment[i];
+        clusters[cluster].push_back(points[i]);
+    }
+
     return clusters;
 }
 
