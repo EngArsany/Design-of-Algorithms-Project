@@ -96,27 +96,6 @@ double clusterDistance(const Cluster &a, const Cluster &b)
     return centroidA.distanceTo(centroidB);
 }
 
-vector<Cluster> assignPointsToNearestCluster(const vector<Point> &points, const vector<Point> &centroids)
-{
-    vector<Cluster> clusters(centroids.size());
-    for (const Point &point : points)
-    {
-        int nearestIndex = 0;
-        double minDistance = point.distanceTo(centroids[0]);
-        for (int i = 1; i < (int)centroids.size(); i++)
-        {
-            double distance = point.distanceTo(centroids[i]);
-            if (distance < minDistance)
-            {
-                minDistance = distance;
-                nearestIndex = i;
-            }
-        }
-        clusters[nearestIndex].push_back(point);
-    }
-    return clusters;
-}
-
 void printClusters(const vector<Cluster> &clusters)
 {
     for (int i = 0; i < (int)clusters.size(); i++)
