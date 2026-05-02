@@ -39,7 +39,7 @@ vector<Cluster> iterativeImprovementClusters(const vector<Point> &points, int k)
         bool converged = true;
         for (int i = 0; i < k; i++)
         {
-            Point newCentroid = computeMeanPoint(clusters[i]);
+            Point newCentroid = computeCentroid(clusters[i]);
             if (newCentroid != centroids[i])
                 converged = false;
             newCentroids.push_back(newCentroid);

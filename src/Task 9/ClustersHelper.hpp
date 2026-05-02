@@ -41,7 +41,7 @@ using Cluster = vector<Point>;
 
 // --- Point utilities ---
 
-Point computeMeanPoint(const vector<Point> &points)
+Point computeCentroid(const vector<Point> &points)
 {
     double totalX = 0, totalY = 0;
     for (const Point &p : points)
@@ -84,11 +84,6 @@ bool isBaseCase(const vector<Point> &points, int k)
     return k == 1 || k >= (int)points.size();
 }
 
-Point computeCentroid(const Cluster &cluster)
-{
-    return computeMeanPoint(cluster);
-}
-
 double clusterDistance(const Cluster &a, const Cluster &b)
 {
     Point centroidA = computeCentroid(a);
@@ -105,7 +100,6 @@ void printClusters(const vector<Cluster> &clusters)
             p.print();
         cout << "\n";
     }
-    cout << "\n";
 }
 
 vector<Cluster> mergeClusters(vector<Cluster> clusters, int targetCount)
