@@ -63,8 +63,6 @@ vector<Cluster> iterativeImprovementClusters(const vector<Point> &points, int k)
 
 vector<Cluster> divideAndConquerClusters(const vector<Point> &points, int k)
 {
-    if (k == 1)
-        return vector<Cluster>{points};
     if ((int)points.size() <= k)
         return eachPointAsCluster(points);
 
@@ -72,14 +70,13 @@ vector<Cluster> divideAndConquerClusters(const vector<Point> &points, int k)
     vector<Point> leftPoints(points.begin(), points.begin() + middle);
     vector<Point> rightPoints(points.begin() + middle, points.end());
 
-    int leftAmount = k / 2;
-    int rightAmount = k - leftAmount;
-    vector<Cluster> leftClusters = divideAndConquerClusters(leftPoints, leftAmount);
-    vector<Cluster> rightClusters = divideAndConquerClusters(rightPoints, rightAmount);
+    vector<Cluster> leftClusters = divideAndConquerClusters(left, k);
+    vector<Cluster> rightClusters = divideAndConquerClusters(right, k);
 
-    vector<Cluster> combinedClusters = leftClusters;
-    combinedClusters.insert(combinedClusters.end(), rightClusters.begin(), rightClusters.end());
-    return combinedClusters;
+    vector<Cluster> combined = leftClusters;
+    combined.insert(combined.end(), rightClusters.begin(), rightClusters.end());
+
+    return mergeClusters(combined, k);
 }
 
 int main()
