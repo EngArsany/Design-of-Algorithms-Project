@@ -39,7 +39,18 @@ public:
 
 using Cluster = vector<Point>;
 
-// --- Point utilities ---
+bool isBaseCase(const vector<Point> &points, int k)
+{
+    return k == 1 || k >= (int)points.size();
+}
+
+vector<Cluster> eachPointAsCluster(const vector<Point> &points)
+{
+    vector<Cluster> clusters;
+    for (const Point &p : points)
+        clusters.push_back({p});
+    return clusters;
+}
 
 Point computeCentroid(const vector<Point> &points)
 {
@@ -50,21 +61,6 @@ Point computeCentroid(const vector<Point> &points)
         totalY += p.getY();
     }
     return Point(totalX / points.size(), totalY / points.size());
-}
-
-// --- Cluster utilities ---
-
-vector<Cluster> eachPointAsCluster(const vector<Point> &points)
-{
-    vector<Cluster> clusters;
-    for (const Point &p : points)
-        clusters.push_back({p});
-    return clusters;
-}
-
-bool isBaseCase(const vector<Point> &points, int k)
-{
-    return k == 1 || k >= (int)points.size();
 }
 
 double clusterDistance(const Cluster &a, const Cluster &b)
