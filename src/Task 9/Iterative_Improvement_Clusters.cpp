@@ -27,9 +27,15 @@ vector<Cluster> iterativeImprovementClusters(const vector<Point> &points, int k)
     if (isBaseCase(points, k))
         return k == 1 ? vector<Cluster>{points} : eachPointAsCluster(points);
 
+    // Choose centroids from random points inside the points vector
     vector<Point> centroids;
-    for (int i = 0; i < k; i++)
-        centroids.push_back(Point(rand() % 25, rand() % 25));
+    vector<int> pointsIndices(points.size());
+    iota(pointsIndices.begin(), pointsIndices.end(), 0);
+    random_shuffle(pointsIndices.begin(), pointsIndices.end());
+    for (int i = 0; i < k; i++){
+        int randomPoint = pointsIndices[i];
+        centroids.push_back(points[randomPoint]);
+    }
 
     while (true)
     {
