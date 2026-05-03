@@ -48,11 +48,13 @@ vector<Cluster> iterativeImprovementClusters(const vector<Point> &points, int k)
             Point newCentroid = computeCentroid(clusters[i]);
             if (newCentroid != centroids[i])
                 converged = false;
+                
             newCentroids.push_back(newCentroid);
         }
 
         if (converged)
             return clusters;
+
         centroids = newCentroids;
     }
 }
