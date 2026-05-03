@@ -45,10 +45,12 @@ vector<Cluster> iterativeImprovementClusters(const vector<Point> &points, int k)
         bool converged = true;
         for (int i = 0; i < k; i++)
         {
-            Point newCentroid = computeCentroid(clusters[i]);
+            // compute the mean point of the points in a cluster
+            // this mean point is the new cluster centroid (iterative improvement step)
+            Point newCentroid = computeCentroid(clusters[i]); 
             if (newCentroid != centroids[i])
                 converged = false;
-                
+
             newCentroids.push_back(newCentroid);
         }
 
