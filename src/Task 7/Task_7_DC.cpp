@@ -53,6 +53,8 @@ int main()
     vector<int> result(n);
     int time = 0, minPenalties = 0;
 
+    cout << "enter: " << endl;
+    cout << "(time) | (penalty) | (deadline) of each job " << endl;
     for (int i = 0; i < n; i++)
     {
         cin >> t[i] >> p[i] >> d[i];
