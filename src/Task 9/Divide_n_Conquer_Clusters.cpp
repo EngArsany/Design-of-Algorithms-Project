@@ -49,10 +49,14 @@ vector<Cluster> divideAndConquerClusters(const vector<Point> &points, int k)
 
 int main()
 {
-    vector<Point> points = {
-        Point(1, 2), Point(3, 4), Point(5, 6),
-        Point(7, 8), Point(9, 10), Point(11, 12),
-        Point(13, 14), Point(15, 16), Point(17, 18), Point{19, 20}};
+ vector<Point> points = {
+        Point(2, 3), Point(3, 2), Point(4, 5), Point(5, 4), Point(6, 3),
+        Point(1, 6), Point(7, 2), Point(3, 7), Point(4, 4), Point(5, 5),
+        Point(11, 12), Point(12, 11), Point(13, 14), Point(14, 13), Point(15, 12),
+        Point(10, 15), Point(16, 11), Point(12, 16), Point(13, 13), Point(14, 14),
+        Point(20, 21), Point(21, 20), Point(22, 23), Point(23, 22), Point(24, 21),
+        Point(20, 24), Point(25, 22), Point(22, 25), Point(23, 23), Point(24, 24)
+    };
 
     vector<int> testCases = {2, 3, 4, 5};
     for (int test : testCases)
