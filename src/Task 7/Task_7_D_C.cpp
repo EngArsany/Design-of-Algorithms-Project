@@ -44,7 +44,9 @@ void mergeSort(vector<int> &job, int l, int r)
 
 int main()
 {
+    cout << "enter number of jobs: " << endl;
     cin >> n;
+
     t.resize(n);
     p.resize(n);
     d.resize(n);

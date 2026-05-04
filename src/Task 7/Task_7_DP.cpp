@@ -1,13 +1,17 @@
 #include <iostream>
 #include <vector>
 #include <climits>
+#include <algorithm>
 using namespace std;
 
 int main()
 {
+    cout << "enter number of jobs: " << endl;
     int n;
     cin >> n;
     int totalStates = 1 << n;
+    cout << "enter: " << endl;
+    cout << "(time) | (penalty) | (deadline) of each job " << endl;
     vector<int> t(n), p(n), d(n);
     vector<int> dp(totalStates, INT_MAX);
     vector<int> last_state(totalStates, -1);
@@ -38,22 +42,22 @@ int main()
 
             if (newPenalty < dp[newMask])
             {
-                dp[newMask] = newPenalty;    
-                last_state[newMask] = mask;      
-                last_Job[newMask] = i;       
-                timeUsed[newMask] = newTime; 
+                dp[newMask] = newPenalty;
+                last_state[newMask] = mask;
+                last_Job[newMask] = i;
+                timeUsed[newMask] = newTime;
             }
         }
     }
 
-    int allDone = totalStates - 1; 
+    int allDone = totalStates - 1;
     vector<int> result;
     int current = allDone;
 
     while (current != 0)
     {
-        result.push_back(last_Job[current]); 
-        current = last_state[current];          
+        result.push_back(last_Job[current]);
+        current = last_state[current];
     }
     reverse(result.begin(), result.end());
 
