@@ -1,0 +1,75 @@
+BruteForceMinCut(n, edges):
+    bestWeight = +infinity
+    bestSide[0..n-1] = all 0
+
+    side[0] = 0  // fix vertex 0 in S
+
+    // Enumerate all 2^(n-1) assignments of vertices 1..n-1
+    for mask from 0 to (2^(n-1) - 1):
+        // Build side[] from mask
+        for v from 1 to n-1:
+            bit = (mask >> (v-1)) & 1
+            side[v] = bit   // 0 means S, 1 means T
+
+        // Skip invalid cut where T is empty (all vertices in S)
+        if mask == 0:
+            continue
+
+        W = 0
+        for each edge (u, v, w) in edges:
+            if side[u] != side[v]:
+                W = W + w
+
+        if W < bestWeight:
+            bestWeight = W
+            bestSide = side
+
+    return bestWeight, PartitionFrom(bestSide)
+
+    LocalImprovementMinCut(n, adj, R, seed):
+    rng = Random(seed)
+    bestWeight = +infinity
+    bestSide[0..n-1] = all 0
+
+    for restart from 1 to R:
+        side = RandomInitialCut(n, rng)   // ensure both sides nonempty
+        countS = number of vertices with side[v] = 0
+        countT = n - countS
+
+        W = CutWeight(side, edges)        // compute initial weight O(m)
+
+        improved = true
+        while improved:
+            improved = false
+            bestDelta = 0
+            bestV = -1
+
+            for v from 0 to n-1:
+                // Do not allow flips that make one side empty
+                if side[v] == 0 and countS == 1: continue
+                if side[v] == 1 and countT == 1: continue
+
+                delta = 0
+                for each (u, w_uv) in adj[v]:
+                    if side[u] == side[v]:
+                        delta = delta + w_uv
+                    else:
+                        delta = delta - w_uv
+
+                if delta < bestDelta:
+                    bestDelta = delta
+                    bestV = v
+
+            if bestV != -1:  // we found an improving move
+                // apply the flip
+                if side[bestV] == 0: countS--; countT++
+                else:                countT--; countS++
+                side[bestV] = 1 - side[bestV]
+                W = W + bestDelta
+                improved = true
+
+        if W < bestWeight:
+            bestWeight = W
+            bestSide = side
+
+    return bestWeight, PartitionFrom(bestSide)
