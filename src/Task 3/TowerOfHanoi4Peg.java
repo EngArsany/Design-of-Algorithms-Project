@@ -135,10 +135,36 @@ public class TowerOfHanoi4Peg {
         System.out.printf("  Move reduction vs 3-peg : %.1f%%%n", saving);
         System.out.println("=".repeat(65));
     }
+    
+    private static int getUserDisks(Scanner sc, int maxDisks) {
+        int n = 0;
+        while (true) {
+            System.out.printf("%nEnter number of disks (1 – %d): ", maxDisks);
+            if (sc.hasNextInt()) {
+                n = sc.nextInt();
+                if (n >= 1 && n <= maxDisks) break;
+                System.out.printf("  [Error] Please enter a value between 1 and %d.%n", maxDisks);
+            } else {
+                System.out.println("  [Error] Invalid input. Please enter a whole number.");
+                sc.next(); // discard bad token
+            }
+        }
+        return n;
+    }
+
+    private static boolean askYesNo(Scanner sc, String prompt) {
+        while (true) {
+            System.out.print(prompt + " (y/n): ");
+            String ans = sc.next().trim().toLowerCase();
+            if (ans.equals("y") || ans.equals("yes")) return true;
+            if (ans.equals("n") || ans.equals("no"))  return false;
+            System.out.println("  [Error] Please enter y or n.");
+        }
+    }
 
     public static void main(String[] args) {
 
-        final int MAX_DISKS = 12;
+        final int MAX_DISKS = 20;
         buildDPTable(MAX_DISKS);
 
         System.out.println("\n" + "=".repeat(65));
@@ -149,22 +175,24 @@ public class TowerOfHanoi4Peg {
         System.out.println("\n[ TABLE 1: DP Optimal Move Counts ]");
         printDPTable(MAX_DISKS);
 
-        // Case 1: 3 disks (small, show full moves)
-        runDemo(3, true);
+        Scanner sc = new Scanner(System.in);
 
-        // Case 2: 5 disks (medium)
-        runDemo(5, false);
+        do {
+            int n       = getUserDisks(sc, MAX_DISKS);
 
-        // Case 3: 8 disks (main problem - show only summary)
-        runDemo(8, false);
+            // Warn before printing thousands of lines
+            boolean print = false;
+            if (n <= 12) {
+                print = askYesNo(sc, "  Show full move sequence?");
+            } else {
+                System.out.println("  (Move list suppressed for n > 12 to avoid excessive output.)");
+            }
 
-        // Case 4: 8 disks with FULL move list
-        System.out.println("\n[ FULL MOVE LIST: 8 Disks (33 moves) ]");
-        runDemo(8, true);
+            runDemo(n, print);
 
-        // Case 5: 10 and 12 disks (large)
-        runDemo(10, false);
-        runDemo(12, false);
+        } while (askYesNo(sc, "\nRun another simulation?"));
 
+        System.out.println("\n  Goodbye!");
+        sc.close();
     }
 }
